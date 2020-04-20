@@ -203,7 +203,7 @@ class RL_Trainer(object):
             _, loss = self.agent.train(*sampled_data)
             self.training_loss += [loss]
 
-            print(f'loss {loss}')
+            # print(f'loss {loss}')
 
     def do_relabel_with_expert(self, expert_policy, paths):
         print("\nRelabelling collected observations with labels from an expert policy...")

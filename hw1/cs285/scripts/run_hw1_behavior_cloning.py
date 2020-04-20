@@ -74,18 +74,18 @@ def main():
 
     # number of gradient steps for training policy (per iter in n_iter)
     parser.add_argument('--num_agent_train_steps_per_iter',
-                        type=int, default=1000)
+                        type=int, default=2000)
     parser.add_argument('--n_iter', '-n', type=int, default=1)
 
     # training data collected (in the env) during each iteration
-    parser.add_argument('--batch_size', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=10000)
     parser.add_argument('--eval_batch_size', type=int,
-                        default=200)  # eval data collected (in the env) for logging metrics
+                        default=2000)  # eval data collected (in the env) for logging metrics
     parser.add_argument('--train_batch_size', type=int,
-                        default=100)  # number of sampled data points to be used per gradient/train step
+                        default=1000)  # number of sampled data points to be used per gradient/train step
 
     # depth, of policy to be learned
-    parser.add_argument('--n_layers', type=int, default=2)
+    parser.add_argument('--n_layers', type=int, default=20)
     # width of each layer, of policy to be learned
     parser.add_argument('--size', type=int, default=64)
     parser.add_argument('--learning_rate', '-lr', type=float,
