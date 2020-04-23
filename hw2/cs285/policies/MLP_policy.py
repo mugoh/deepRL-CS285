@@ -108,14 +108,27 @@ class MLPPolicy(BasePolicy):
     # query the policy with observation(s) to get selected action(s)
     def get_action(self, obs):
 
-        # TODO: GETTHIS from HW1
+        # : GETTHIS from HW1
+        if len(obs.shape) > 1:
+            observation = obs
+        else:
+            observation = obs[None]
+
+        # return the action that the policy prescribes
+        # HINT1: you will need to call self.sess.run
+        # HINT2: the tensor we're interested in evaluating is self.sample_ac
+        # HINT3: in order to run self.sample_ac, it will need observation fed into the feed_dict
+        action = self.sess.run(self.sample_ac, feed_dict={
+                               self.observations_pl: observation})
+
+        return action
 
 #####################################################
 #####################################################
 
 # class MLPPolicySL(MLPPolicy):
 
-    # TODO: GETTHIS from HW1 (or comment it out, since you don't need it for this homework)
+    # TODO: GETTHIS from HW2 (or comment it out, since you don't need it for this homework)
 
 #####################################################
 #####################################################
@@ -153,7 +166,7 @@ class MLPPolicyPG(MLPPolicy):
             # sum_{t=0}^{T-1} [grad [log pi(a_t|s_t) * (Q_t - b_t)]]
         # HINT2: see define_log_prob (above)
             # to get log pi(a_t|s_t)
-        # HINT3: look for a placeholder above that will be populated with advantage values 
+        # HINT3: look for a placeholder above that will be populated with advantage values
             # to get [Q_t - b_t]
         # HINT4: don't forget that we need to MINIMIZE this self.loss
             # but the equation above is something that should be maximized
@@ -175,7 +188,7 @@ class MLPPolicyPG(MLPPolicy):
     #########################
 
     def run_baseline_prediction(self, obs):
-        
+
         # TODO: query the neural net that's our 'baseline' function, as defined by an mlp above
         # HINT1: query it with observation(s) to get the baseline value(s)
         # HINT2: see build_baseline_forward_pass (above) to see the tensor that we're interested in
