@@ -107,7 +107,8 @@ class PGAgent(BaseAgent):
             # HINT1: value of each point (t) = total discounted reward summed over the remainder of that trajectory (from t to T-1)
             # In other words, q(s_t, a_t) = sum_{t'=t}^{T-1} gamma^(t'-t) * r_{t'}
             # Hint3: see the helper functions at the bottom of this file
-            q_values = np.concatenate([TODO for r in rews_list])
+            q_values = np.concatenate(
+                [self._discounted_cumsum(r) for r in rews_list])
 
         return q_values
 
@@ -162,15 +163,14 @@ class PGAgent(BaseAgent):
 
         # 1) create a list of indices (t'): from 0 to T-1
         rew_len = len(rewards)
-        gamma = .99
 
         indices = np.arange(rew_len)
 
         # 2) create a list where the entry at each index (t') is gamma^(t')
-        discounts = np.power(gamma, indices)
+        discounts = np.power(self.gamma, indices)
 
         # 3) create a list where the entry at each index (t') is gamma^(t') * r_{t'}
-        discounted_rewards = discounts * rewards
+        discounted_rewards = np.multiply(discounts, rewards)
 
         # 4) calculate a scalar: sum_{t'=0}^{T-1} gamma^(t') * r_{t'}
         sum_of_discounted_rewards = np.sum(discounted_rewards)
@@ -193,24 +193,27 @@ class PGAgent(BaseAgent):
         """
 
         all_discounted_cumsums = []
+        rew_len = len(rewards)
 
         # for loop over steps (t) of the given rollout
         for start_time_index in range(len(rewards)):
 
             # 1) create a list of indices (t'): goes from t to T-1
-            indices = TODO
+            indices = np.arange(start_time_index, rew_len)
 
             # 2) create a list where the entry at each index (t') is gamma^(t'-t)
-            discounts = TODO
+            discounts = np.power(self.gamma, indices - start_time_index)
 
             # 3) create a list where the entry at each index (t') is gamma^(t'-t) * r_{t'}
             # Hint: remember that t' goes from t to T-1, so you should use the rewards from those indices as well
-            discounted_rtg = TODO
+            # np.multiply faster with arrays
+            discounted_rtg = np.multiply(
+                discounts, rewards[start_time_index:, ])
 
             # 4) calculate a scalar: sum_{t'=t}^{T-1} gamma^(t'-t) * r_{t'}
-            sum_discounted_rtg = TODO
+            sum_discounted_rtg = np.sum(discounted_rtg)
 
             # appending each of these calculated sums into the list to return
             all_discounted_cumsums.append(sum_discounted_rtg)
-        list_of_discounted_cumsums = np.array(all_discounted_cumsums)
+        list_of_discounted_cumsums = np.asanyarray(all_discounted_cumsums)
         return list_of_discounted_cumsums
