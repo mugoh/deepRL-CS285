@@ -2,17 +2,29 @@
 - Policy Gradient experiment on discrete CartPole-v0 environment
 
 #### Commands
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -dsa --exp_name sb_no_rtg_dsa --n_layers 4
+```
 
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -rtg -dsa --exp_name sb_rtg_dsa --n_layers 4
+```
 
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -rtg --exp_name sb_rtg_na --n_layers 4
+```
 
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -dsa --exp_name lb_no_rtg_dsa --n_layers 4
+```
 
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg -dsa --exp_name lb_rtg_dsa --n_layers 4
+```
 
+```
 python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg --exp_name lb_rtg_na --n_layers 4
+```
 
 ### Deliverables
 - [Link to small batch experiments graph]
@@ -34,6 +46,7 @@ However, this may not generalize well in other environments[different reward val
 
 My interpretation of this is standardizing advantages would similary scale down states of higher value in environments with large variance on the advantage of sampled states.
 
+
 - Did the batch size make an impact?
 Yes. [Link to sb_vs_lb_rtg_graph]. Using a larger batch size results  in lower variance in the model during learning. The graph shows the learning is quicker and more stable for the large_batch compared to the small batch
 
@@ -41,5 +54,12 @@ Yes. [Link to sb_vs_lb_rtg_graph]. Using a larger batch size results  in lower v
 ## Problem 4 : InvertedPendulum
 
 ##### Command
-python run_hw2_policy_gradient.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.9 -n 100 -l 2 -s 64 -b $BATCH_SIZE -lr $LR -rtg --exp_name ip_b$BATCH_SIZE_r$LR
+`$ export BATCH_SIZE=5000`
+`$ export LR=5e-3`
+```
+python run_hw2_policy_gradient.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.9 -n 100 -l 2 -s 64 -b $BATCH_SIZE -lr $LR -rtg --exp_name ip_b"$BATCH_SIZE"_r"$LR"
+```
+
+[Link optimum_bs_lr2 graph]
+
 

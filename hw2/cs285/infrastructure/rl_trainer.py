@@ -165,11 +165,13 @@ class RL_Trainer(object):
         # ``` return loaded_paths, 0, None ```
 
         # collect data, batch_size is the number of transitions you want to collect.
+        """
         if not itr:
             with open(load_initial_expertdata, 'rb') as f:
                 initial_expert_data = pickle.load(f)
             return initial_expert_data, 0, None
 
+        """
         # : collect data to be used for training
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
@@ -202,7 +204,7 @@ class RL_Trainer(object):
             #  use the sampled data for training
             # HINT: use the agent's train function
             # HINT: print or plot the loss for debugging!
-            _, loss = self.agent.train(*sampled_data)
+            loss = self.agent.train(*sampled_data)
             self.training_loss += [loss]
 
             # print(f'loss {loss}')
