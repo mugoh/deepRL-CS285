@@ -1,0 +1,43 @@
+## Problem 3: Cartpole
+- Policy Gradient experiment on discrete CartPole-v0 environment
+
+#### Commands
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -dsa --exp_name sb_no_rtg_dsa --n_layers 4
+
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -rtg -dsa --exp_name sb_rtg_dsa --n_layers 4
+
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 1000 -rtg --exp_name sb_rtg_na --n_layers 4
+
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -dsa --exp_name lb_no_rtg_dsa --n_layers 4
+
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg -dsa --exp_name lb_rtg_dsa --n_layers 4
+
+python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg --exp_name lb_rtg_na --n_layers 4
+
+### Deliverables
+- [Link to small batch experiments graph]
+- [Link to large batch experiments graph]
+
+##### Questions
+- Which value estimator has better performance without advantage-standardization:
+the trajectory-centric one, or the one using reward-to-go?
+[Link to rtg & non_rtg graph]
+-- The estimator using reward to go(rtg) convrges more quickly and has a more stable return/learning curve after the 80th step. Applying causality (rtg) minimizes variance
+
+- Did advantage standardization help?
+[Link small_batch_adv standard graph] Apparently. Standardization seems to improve learning stability but lowers the speed
+
+**Note**: In CArtpole, The agent receives a reward with a value of 1 for every step it survives. So the rewards are in a consistent range of values, and standardizing them seems safe, as there aren't important rare events with extremely high rewards.
+
+However, this may not generalize well in other environments[different reward values]
+[see https://ai.stackexchange.com/questions/10196/why-does-is-make-sense-to-normalize-rewards-per-episode-in-reinforcement-learnin]
+
+- Did the batch size make an impact?
+Yes. [Link to sb_vs_lb_rtg_graph]. Using a larger batch size results  in lower variance in the model during learning. The graph shows the learning is quicker and more stable for the large_batch compared to the small batch
+
+
+## Problem 4 : InvertedPendulum
+
+##### Command
+python run_hw2_policy_gradient.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.9 -n 100 -l 2 -s 64 -b $BATCH_SIZE -lr $LR -rtg --exp_name ip_b$BATCH_SIZE_r$LR
+
