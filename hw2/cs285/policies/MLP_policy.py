@@ -210,7 +210,13 @@ class MLPPolicyPG(MLPPolicy):
         # HINT1: query it with observation(s) to get the baseline value(s)
         # HINT2: see build_baseline_forward_pass (above) to see the tensor that we're interested in
         # HINT3: this will be very similar to how you implemented get_action (above)
-        return TODO
+        if obs.ndim == 1:
+            obs = obs[np.newaxis, ]
+
+        # The baseline is V(s) of the given state
+        baseline_value = self.sess.run(self.baseline_prediction, feed_dict={
+                                       self.observations_pl: obs})
+        return baseline_value
 
     def update(self, observations, acs_na, adv_n=None, acs_labels_na=None, qvals=None):
         assert self.training, 'Policy must be created with training=True in order to perform training updates...'
