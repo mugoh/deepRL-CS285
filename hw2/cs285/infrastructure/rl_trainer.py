@@ -110,6 +110,7 @@ class RL_Trainer(object):
                 self.log_metrics = False
 
             self.training_loss = []
+            self.val_loss = []
 
             # collect trajectories, to be used for training
             training_returns = self.collect_training_trajectories(itr,
@@ -205,7 +206,12 @@ class RL_Trainer(object):
             # HINT: use the agent's train function
             # HINT: print or plot the loss for debugging!
             loss = self.agent.train(*sampled_data)
-            self.training_loss += [loss]
+            if isinstance(loss, tuple):
+                train_loss, val_loss = loss
+                self.training_loss += training_loss
+                self.val_loss += val_loss
+            else:
+                self.training_loss += [loss]
 
             # print(f'loss {loss}')
 
@@ -274,6 +280,8 @@ class RL_Trainer(object):
             logs["Train_EnvstepsSoFar"] = self.total_envsteps
             logs["TimeSinceStart"] = time.time() - self.start_time
             logs['Training_loss_Average'] = np.mean(self.training_loss)
+            if self.val_loss:
+                logs['Value_loss_Average'] = np.mean(self.val_loss)
 
             if itr == 0:
                 self.initial_return = np.mean(train_returns)

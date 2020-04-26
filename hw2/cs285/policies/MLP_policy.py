@@ -228,8 +228,9 @@ class MLPPolicyPG(MLPPolicy):
             targets_n = (qvals - np.mean(qvals))/(np.std(qvals)+1e-8)
             # TODO: update the nn baseline with the targets_n
             # HINT1: run an op that you built in define_train_op
-            TODO
-        return loss
+            _, val_loss = self.sess.run([self.baseline_update_op, self.baseline_loss], feed_dict={
+                                        self.observations_pl: observations, self.targets_n: targets_n})
+        return loss, val_loss
 
 #####################################################
 #####################################################
