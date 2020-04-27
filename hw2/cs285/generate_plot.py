@@ -43,14 +43,19 @@ def plot():
                 if smooth:
 
                     from scipy.interpolate import make_interp_spline
-                    x_ = np.linspace(x.min(), x.max(), 300)
+                    x_ = np.linspace(x.min(), x.max(), 300000)
                     Bs_pline = make_interp_spline(x, y)
                     y_ = Bs_pline(x_)
                 plt.plot(x_, y_, label=path[20:30])
 
     elif problem == '4':
         path = '.figures_csv/run_pg_ip_b5000_r2e-2_InvertedPendulum-v2_25-04-2020_17-18-32-tag-Eval_AverageReturn.csv'
-        title_ = 'problem 4'
+        title_ = 'problem 4 Inverted Pendulum'
+        create_plt(path, title_)
+
+    elif problem == '6':
+        path = '.figures_csv/run_pg_ll_b40000_r0.005_LunarLanderContinuous-v2_27-04-2020_11-29-19-tag-Eval_AverageReturn.csv'
+        title_ = 'problem 6 Lunar ladar'
         create_plt(path, title_)
     else:
         print(f'Unable to find the problem number: {problem}')

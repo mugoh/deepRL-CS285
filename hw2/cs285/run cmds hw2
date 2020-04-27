@@ -30,6 +30,12 @@ python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg --e
 - [Link to small batch experiments graph]
 - [Link to large batch experiments graph]
 
+#### Generating the image plots
+In the hw2 directory, run the command
+`python3 generate_plot.py 3`
+
+
+
 ##### Questions
 - Which value estimator has better performance without advantage-standardization:
 the trajectory-centric one, or the one using reward-to-go?
@@ -46,7 +52,6 @@ However, this may not generalize well in other environments[different reward val
 
 My interpretation of this is standardizing advantages would similary scale down states of higher value in environments with large variance on the advantage of sampled states.
 
-
 - Did the batch size make an impact?
 Yes. [Link to sb_vs_lb_rtg_graph]. Using a larger batch size results  in lower variance in the model during learning. The graph shows the learning is quicker and more stable for the large_batch compared to the small batch
 
@@ -56,10 +61,24 @@ Yes. [Link to sb_vs_lb_rtg_graph]. Using a larger batch size results  in lower v
 ##### Command
 `$ export BATCH_SIZE=5000`
 `$ export LR=5e-3`
+
 ```
 python run_hw2_policy_gradient.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.9 -n 100 -l 2 -s 64 -b $BATCH_SIZE -lr $LR -rtg --exp_name ip_b"$BATCH_SIZE"_r"$LR"
 ```
 
 [Link optimum_bs_lr2 graph]
 
+#### Generating the image plots
+In the hw2 directory, run the command
+`python3 generate_plot.py 4`
+
+
+
+
+## Problem 6: LunarLadar
+```
+python run_hw2_policy_gradient.py --env_name LunarLanderContinuous-v2 --ep_len 1000 --discount 0.99 -n 100 -l 2 -s 64 -b 40000 -lr 0.005 -rtg --nn_baseline --exp_name ll_b40000_r0.005
+```
+
+[Link to problem_6_lunar_ladar.png]
 

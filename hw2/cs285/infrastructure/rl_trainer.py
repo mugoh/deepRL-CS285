@@ -208,8 +208,8 @@ class RL_Trainer(object):
             loss = self.agent.train(*sampled_data)
             if isinstance(loss, tuple):
                 train_loss, val_loss = loss
-                self.training_loss += training_loss
-                self.val_loss += val_loss
+                self.training_loss += [train_loss]
+                self.val_loss += [val_loss]
             else:
                 self.training_loss += [loss]
 
