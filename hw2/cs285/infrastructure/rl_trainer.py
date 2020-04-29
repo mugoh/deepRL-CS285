@@ -1,4 +1,3 @@
-import pdb
 import multiprocessing
 import concurrent.futures
 import time
@@ -97,6 +96,17 @@ class RL_Trainer(object):
         self.total_envsteps = 0
         self.start_time = time.time()
 
+        if self.params['parallel']:
+            batch_s = self.params['batch_size']
+            cores = multiprocessing.cpu_count()
+            batch_per_core = batch_s // cores
+            rem = batch_s % cores
+            batches = [batch_per_core] * cores
+
+            if rem:
+                batches[:rem] = batches[:rem] + 1
+            print(f'Starting threading: using {cores} cores')
+
         for itr in range(n_iter):
             print("\n\n********** Iteration %i ************" % itr)
 
@@ -120,17 +130,6 @@ class RL_Trainer(object):
 
             if self.params['parallel']:
 
-                batch_s = self.params['batch_size']
-                cores = multiprocessing.cpu_count()
-                batch_per_core = batch_s // cores
-                rem = batch_s % cores
-                print(f'Starting threading: using {cores} cores')
-
-                batches = [batch_per_core] * cores
-
-                if rem:
-                    batches[:rem] = batches[:rem] + 1
-
                 with concurrent.futures.ThreadPoolExecutor(max_workers=cores) as executor:
                     future = {
                         executor.submit(
@@ -138,16 +137,15 @@ class RL_Trainer(object):
                         b_s for b_s in batches
                     }
 
-                    for i, trajectory in enumerate(concurrent.futures.as_completed(future)):
+                    for trajectory in concurrent.futures.as_completed(future):
                         try:
                             data = trajectory.result()
                         except Exception as e:
                             print(f'Generated exception : {e}')
                         else:
-                            print(f'Received trajectory from thread {i+1}')
                             training_returns.append(data)
 
-                returns = np.asarray(training_returns)
+                returns = np.asanyarray(training_returns)
                 training_returns = np.concatenate(returns[:,
                                            0]), returns[:, 1].sum(), returns[:, 2]
                 if np.any(training_returns[2]):

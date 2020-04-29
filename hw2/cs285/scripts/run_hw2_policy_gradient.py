@@ -23,6 +23,7 @@ class PG_Trainer(object):
             'standardize_advantages': not(params['dont_standardize_advantages']),
             'reward_to_go': params['reward_to_go'],
             'nn_baseline': params['nn_baseline'],
+            'lambda': params['lambda']
         }
 
         train_args = {
@@ -78,7 +79,8 @@ def main():
     parser.add_argument('--video_log_freq', type=int, default=-1)   # video log disabled
     parser.add_argument('--scalar_log_freq', type=int, default=1)
     parser.add_argument('--parallel', action='store_true') # Parallelize trajectory collection
-
+    parser.add_argument('--gae', action='store_true') # GAE for advantage estimation
+    parser.add_argument('--lambda', type=float, default=.95)
     parser.add_argument('--save_params', action='store_true')
 
     args = parser.parse_args()

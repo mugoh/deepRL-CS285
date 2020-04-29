@@ -18,7 +18,8 @@ class PGAgent(BaseAgent):
         self.standardize_advantages = self.agent_params['standardize_advantages']
         self.nn_baseline = self.agent_params['nn_baseline']
         self.reward_to_go = self.agent_params['reward_to_go']
-
+        self.gae = self.agent_params.get('gae')
+        self.lamda = self.agent_params['lambda']
         # actor/policy
         # NOTICE that we are using MLPPolicyPG (hw2), instead of MLPPolicySL (hw1)
         # which indicates similar network structure (layout/inputs/outputs),
@@ -31,7 +32,8 @@ class PGAgent(BaseAgent):
                                  self.agent_params['size'],
                                  discrete=self.agent_params['discrete'],
                                  learning_rate=self.agent_params['learning_rate'],
-                                 nn_baseline=self.agent_params['nn_baseline']
+                                 nn_baseline=self.agent_params['nn_baseline'],
+                                 gae=self.agent_params.get('gae', False)
                                  )
 
         # replay buffer
@@ -60,12 +62,17 @@ class PGAgent(BaseAgent):
             ----------------------------------------------------------------------------------
         """
 
-        # step 1: calculate q values of each (s_t, a_t) point,
-        # using rewards from that full rollout of length T: (r_0, ..., r_t, ..., r_{T-1})
-        q_values = self.calculate_q_vals(rews_list)
+        if self.gae:
+            q_values, advantage_values = self.use_gae(
+                np.ravel(rews_list), obs, terminals)
 
-        # step 2: calculate advantages that correspond to each (s_t, a_t) point
-        advantage_values = self.estimate_advantage(obs, q_values)
+        else:
+            # step 1: calculate q values of each (s_t, a_t) point,
+            # using rewards from that full rollout of length T: (r_0, ..., r_t, ..., r_{T-1})
+            q_values = self.calculate_q_vals(rews_list)
+
+            # step 2: calculate advantages that correspond to each (s_t, a_t) point
+            advantage_values = self.estimate_advantage(obs, q_values)
 
         # step 3:
         # TODO: pass the calculated values above into the actor/policy's update,
@@ -111,6 +118,40 @@ class PGAgent(BaseAgent):
                 [self._discounted_cumsum(r) for r in rews_list])
 
         return q_values
+
+    def use_gae(self, rewards, obs, terminals):
+        """
+            GAE: Produces a more accurate estimate of the discounted advantage
+
+            delta[t]: reward + V [t+1] - V[t]
+            Adv = sigma[l=0: inf]([gamma * lambda] ^l * delta[t+1])
+        """
+        v_baseline = self.actor.run_baseline_prediction(obs)
+        rew_len = rewards.size - 1
+        adv = np.zeros((rew_len,))
+
+        for t in reversed(range(rew_len)):
+            """     delta = rewards[t] + ((1 - terminals[t]) *
+                                  self.gamma * v_baseline[t+1]) - v_baseline[t]
+            adv[t] = self.gamma * self.lamda * adv[t+1] + delta
+
+            q_values = adv + v_baseline
+
+            return q_values, adv
+            """
+
+            if terminals[t]:
+                delta = rewards[t] - v_baseline[t]
+                adv[t] = delta
+            else:
+                delta = rewards[t] + ((1 - terminals[t]) * self.gamma * v_baseline[t+1]) - v_baseline[t]
+
+                adv[t] = delta + self.gamma * self.lamda *  adv[t+1]
+        q_values = adv +  v_baseline
+
+        return q_values, v_baseline
+
+
 
     def estimate_advantage(self, obs, q_values):
         """
