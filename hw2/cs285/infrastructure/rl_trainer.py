@@ -15,6 +15,9 @@ from cs285.infrastructure.logger import Logger
 MAX_NVIDEO = 2
 MAX_VIDEO_LEN = 40  # we overwrite this in the code below
 
+import concurrent.futures
+import multiprocessing
+
 
 class RL_Trainer(object):
 
@@ -113,7 +116,39 @@ class RL_Trainer(object):
             self.val_loss = []
 
             # collect trajectories, to be used for training
-            training_returns = self.collect_training_trajectories(itr,
+            training_returns = []
+
+            if self.params['parallel']:
+
+                batch_s = self.params['batch_size']
+                cores = multiprocessing.cpu_count()
+                batch_per_core = batch_s // cores
+                rem = batch_s % cores
+                print(f'Starting threading: using {cores} cores')
+
+                batches = [ batch_per_core] * cores
+
+                if rem:
+                    batches[:rem] = batches[:rem] + 1
+
+                with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                    future = {
+                        executor.submit(
+                            self.collect_training_trajectories, itr, initial_expertdata, collect_policy, b_s):
+                        b_s for b_s in batches
+                    }
+
+                    for i,trajectory in enumerate(concurrent.futures.as_completed(future)):
+                        try:
+                            data = trajectory.result()
+                        except Exception as e:
+                            print(f'Generated exception : {e}')
+                        else:
+                            print(f'Received trajectory from thread {i+1}')
+                            training_returns.append(data)
+
+            else:
+                training_returns = self.collect_training_trajectories(itr,
                                                                   initial_expertdata, collect_policy,
                                                                   self.params['batch_size'])
             paths, envsteps_this_batch, train_video_paths = training_returns
