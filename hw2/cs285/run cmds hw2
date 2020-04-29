@@ -130,14 +130,17 @@ python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --disco
 
 ### Generalized Advantage Estimation (GAE)
 
-```
-python run_hw2_policy_gradient.py --env_name Walker2d-v2 --ep_len 1000 --discount 0.995 -n 100 -l 2 -s 64 -b 1000 -lr 0.005 -rtg --nn_baseline --exp_name gae_1000_r0.005 --lambda 0.95 --gae
-```
-
+No GAE
 ```
 python run_hw2_policy_gradient.py --env_name Walker2d-v2 --ep_len 1000 --discount 0.995 -n 100 -l 2 -s 64 -b 1000 -lr 0.005 -rtg --nn_baseline --exp_name no_gae_1000_r0.005 
 ```
 
+GAE
+```
+python run_hw2_policy_gradient.py --env_name Walker2d-v2 --ep_len 1000 --discount 0.995 -n 100 -l 2 -s 64 -b 1000 -lr 0.005 -rtg --nn_baseline --exp_name gae_1000_r0.005 --lambda 0.95 --gae
+```
+
+GAE normalized q
 ```
 python run_hw2_policy_gradient.py --env_name Walker2d-v2 --ep_len 1000 --discount 0.995 -n 100 -l 2 -s 64 -b 1000 -lr 0.005 -rtg --nn_baseline --exp_name gae_cr_norm_1000_r0.005 --lambda 0.95 --gae
 ```

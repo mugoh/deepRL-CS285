@@ -64,7 +64,7 @@ class PGAgent(BaseAgent):
 
         if self.gae:
             q_values, advantage_values = self.use_gae(
-                np.ravel(rews_list), obs, terminals)
+                np.concatenate(rews_list), obs, terminals)
 
         else:
             # step 1: calculate q values of each (s_t, a_t) point,
@@ -127,31 +127,19 @@ class PGAgent(BaseAgent):
             Adv = sigma[l=0: inf]([gamma * lambda] ^l * delta[t+1])
         """
         v_baseline = self.actor.run_baseline_prediction(obs)
-        rew_len = rewards.size - 1
+        rew_len = rewards.size
         adv = np.zeros((rew_len,))
 
-        for t in reversed(range(rew_len)):
-            """     delta = rewards[t] + ((1 - terminals[t]) *
+        for t in reversed(range(rew_len - 1)):
+            delta = rewards[t] + ((1 - terminals[t]) *
                                   self.gamma * v_baseline[t+1]) - v_baseline[t]
             adv[t] = self.gamma * self.lamda * adv[t+1] + delta
 
             q_values = adv + v_baseline
 
             return q_values, adv
-            """
-
-            if terminals[t]:
-                delta = rewards[t] - v_baseline[t]
-                adv[t] = delta
-            else:
-                delta = rewards[t] + ((1 - terminals[t]) * self.gamma * v_baseline[t+1]) - v_baseline[t]
-
-                adv[t] = delta + self.gamma * self.lamda *  adv[t+1]
-        q_values = adv +  v_baseline
 
         return q_values, v_baseline
-
-
 
     def estimate_advantage(self, obs, q_values):
         """

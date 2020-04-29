@@ -231,8 +231,7 @@ class MLPPolicyPG(MLPPolicy):
             if not self.gae:
                 targets_n = (qvals - np.mean(qvals))/(np.std(qvals)+1e-8)
             else:
-                # targets_n = q_values.copy()
-                targets_n = (qvals - np.mean(qvals))/(np.std(qvals)+1e-8)
+                targets_n = qvals.copy()
             # TODO: update the nn baseline with the targets_n
             # HINT1: run an op that you built in define_train_op
             _, val_loss = self.sess.run([self.baseline_update_op, self.baseline_loss], feed_dict={
