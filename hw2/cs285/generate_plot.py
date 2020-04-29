@@ -49,21 +49,39 @@ def plot():
                 plt.plot(x_, y_, label=path[20:30])
 
     elif problem == '4':
-        path = '.figures_csv/run_pg_ip_b5000_r2e-2_InvertedPendulum-v2_25-04-2020_17-18-32-tag-Eval_AverageReturn.csv'
+        path = ['.figures_csv/run_pg_ip_b5000_r2e-2_InvertedPendulum-v2'
+                + '_25-04-2020_17-18-32-tag-Eval_AverageReturn.csv']
         title_ = 'problem 4 Inverted Pendulum'
         create_plt(path, title_)
 
     elif problem == '6':
-        path = '.figures_csv/run_pg_ll_b40000_r0.005_LunarLanderContinuous-v2_27-04-2020_11-29-19-tag-Eval_AverageReturn.csv'
+        path = [
+            '.figures_csv/run_pg_ll_b40000_r0.005_LunarLanderContinuous-v2' +
+            '_27-04-2020_11-29-19-tag-Eval_AverageReturn.csv']
         title_ = 'problem 6 Lunar ladar'
         create_plt(path, title_)
+
+    elif problem == '7':
+        paths = ['.figures_csv/run_pg_hc_b30000_r.02_HalfCheetah-v2_'
+                 + '28-04-2020_20-06-30-tag-Eval_AverageReturn.csv',
+                 '.figures_csv/run_pg_hc_b30000_r.02_HalfCheetah-v2_'
+                 + '28-04-2020_21-03-18-tag-Eval_AverageReturn.csv',
+                 '.figures_csv/run_pg_hc_b30000_r.02_HalfCheetah-v2_'
+                 + '28-04-2020_19-10-36-tag-Eval_AverageReturn.csv',
+                 '.figures_csv/run_pg_hc_b30000_r.02_HalfCheetah-v2_'
+                 + '28-04-2020_21-58-36-tag-Eval_AverageReturn.csv'
+                 ]
+        title = 'Problem 7 Half Cheeter'
+        create_plt(paths, title)
     else:
         print(f'Unable to find the problem number: {problem}')
 
 
 def create_plt(path, title_):
-    figures = np.loadtxt(path, delimiter=',', skiprows=1)
-    plt.plot(figures[:, 1], figures[:, 2], label=path[20:30])
+    for item in path:
+        figures = np.loadtxt(item, delimiter=',', skiprows=1)
+        plt.plot(figures[:, 1], figures[:, 2], label=item[20:30])
+
     plt.title(title_)
     plt.legend()
     clean_p = title_.replace(' ', '_')

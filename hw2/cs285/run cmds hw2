@@ -82,3 +82,38 @@ python run_hw2_policy_gradient.py --env_name LunarLanderContinuous-v2 --ep_len 1
 
 [Link to problem_6_lunar_ladar.png]
 
+
+## Problem 7: HalfCheeter
+
+- Search over batch sizes [10000, 30000, 50000] and learning rates [0.005, 0.01, 0.02]
+
+```
+export BATCH_SIZE=50000 && export LR=.02 && python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 --reward_to_go --nn_baseline --exp_name hc_b"$BATCH_SIZE"_lr"$LR"_nnbaseline
+```
+
+#### Deliverables:
+[Link half_cheeter_blr_search.png]
+
+- There's a steady increase in the average returns with increase in the batch size for the same number of steps, with increased training time.
+- Increase in learning rate results to faster learning[higher rewards in same learning time]. However, this is also dependant on the batch size - Smaller batches working better with smaller lr(The b10,000 did best on a lr.01, while b30,000 and b50,000 on a lr.02)
+
+##### Commands
+`export BATCH_SIZE=30000 && export LR=.02`
+
+```
+ python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 --exp_name hc_b"$BATCH_SIZE"_r"$LR"
+```
+
+```
+python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 -rtg --exp_name hc_b"$BATCH_SIZE"_r"$LR"
+```
+
+```
+python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 --nn_baseline --exp_name hc_b"$BATCH_SIZE"_r"$LR"
+```
+
+```
+python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 -rtg --nn_baseline --exp_name hc_b"$BATCH_SIZE"_r"$LR"
+```
+
+[Link rtg_baseline]
