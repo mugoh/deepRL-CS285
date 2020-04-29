@@ -1,3 +1,6 @@
+import pdb
+import multiprocessing
+import concurrent.futures
 import time
 
 from collections import OrderedDict
@@ -14,9 +17,6 @@ from cs285.infrastructure.logger import Logger
 # how many rollouts to save as videos to tensorboard
 MAX_NVIDEO = 2
 MAX_VIDEO_LEN = 40  # we overwrite this in the code below
-
-import concurrent.futures
-import multiprocessing
 
 
 class RL_Trainer(object):
@@ -126,19 +126,19 @@ class RL_Trainer(object):
                 rem = batch_s % cores
                 print(f'Starting threading: using {cores} cores')
 
-                batches = [ batch_per_core] * cores
+                batches = [batch_per_core] * cores
 
                 if rem:
                     batches[:rem] = batches[:rem] + 1
 
-                with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=cores) as executor:
                     future = {
                         executor.submit(
                             self.collect_training_trajectories, itr, initial_expertdata, collect_policy, b_s):
                         b_s for b_s in batches
                     }
 
-                    for i,trajectory in enumerate(concurrent.futures.as_completed(future)):
+                    for i, trajectory in enumerate(concurrent.futures.as_completed(future)):
                         try:
                             data = trajectory.result()
                         except Exception as e:
@@ -147,10 +147,17 @@ class RL_Trainer(object):
                             print(f'Received trajectory from thread {i+1}')
                             training_returns.append(data)
 
+                returns = np.asarray(training_returns)
+                training_returns = np.concatenate(returns[:,
+                                           0]), returns[:, 1].sum(), returns[:, 2]
+                if np.any(training_returns[2]):
+                    training_returns[2] = np.concatenate(training_returns[2])
+
             else:
                 training_returns = self.collect_training_trajectories(itr,
-                                                                  initial_expertdata, collect_policy,
-                                                                  self.params['batch_size'])
+                                                                      initial_expertdata, collect_policy,
+                                                                      self.params['batch_size'])
+
             paths, envsteps_this_batch, train_video_paths = training_returns
             self.total_envsteps += envsteps_this_batch
 
@@ -224,7 +231,7 @@ class RL_Trainer(object):
             train_video_paths = sample_n_trajectories(
                 self.env, collect_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
 
-        return paths, envsteps_this_batch, train_video_paths
+        return [paths, envsteps_this_batch, train_video_paths]
 
     def train_agent(self):
         # : GETTHIS from HW1
