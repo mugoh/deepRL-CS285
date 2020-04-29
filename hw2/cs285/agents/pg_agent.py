@@ -130,16 +130,27 @@ class PGAgent(BaseAgent):
         rew_len = rewards.size
         adv = np.zeros((rew_len,))
 
-        for t in reversed(range(rew_len - 1)):
+        for t in reversed(range(rew_len)):
+            """
             delta = rewards[t] + ((1 - terminals[t]) *
                                   self.gamma * v_baseline[t+1]) - v_baseline[t]
             adv[t] = self.gamma * self.lamda * adv[t+1] + delta
 
             q_values = adv + v_baseline
 
-            return q_values, adv
+            return q_values, adv """
 
-        return q_values, v_baseline
+            if terminals[t]:
+                delta = rewards[t] - v_baseline[t]
+                adv[t] = delta
+            else:
+                delta = rewards[t] + (1 - terminals[t]) * \
+                    self.gamma * v_baseline[t+1] - v_baseline[t]
+
+                adv[t] = delta + self.gamma * self.lamda * adv[t+2]
+        q_values = adv + v_baseline
+
+        return q_values, adv
 
     def estimate_advantage(self, obs, q_values):
         """
