@@ -147,7 +147,7 @@ class RL_Trainer(object):
 
                 returns = np.asanyarray(training_returns)
                 training_returns = np.concatenate(returns[:,
-                                           0]), returns[:, 1].sum(), returns[:, 2]
+                                                          0]), returns[:, 1].sum(), returns[:, 2]
                 if np.any(training_returns[2]):
                     training_returns[2] = np.concatenate(training_returns[2])
 
@@ -206,13 +206,12 @@ class RL_Trainer(object):
         # ``` return loaded_paths, 0, None ```
 
         # collect data, batch_size is the number of transitions you want to collect.
-        """
-        if not itr:
+
+        if not itr and load_initial_expertdata:
             with open(load_initial_expertdata, 'rb') as f:
                 initial_expert_data = pickle.load(f)
             return initial_expert_data, 0, None
 
-        """
         # : collect data to be used for training
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
@@ -242,18 +241,25 @@ class RL_Trainer(object):
             # ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = None  #TODO
             sampled_data = self.agent.sample(self.params['train_batch_size'])
 
-            #  use the sampled data for training
-            # HINT: use the agent's train function
-            # HINT: print or plot the loss for debugging!
-            loss = self.agent.train(*sampled_data)
-            if isinstance(loss, tuple):
-                train_loss, val_loss = loss
-                self.training_loss += [train_loss]
-                self.val_loss += [val_loss]
-            else:
-                self.training_loss += [loss]
+            steps = self.params['multistep']
 
-            # print(f'loss {loss}')
+            print('\n == Using multistep PG ==') if steps > 1 else None
+
+            for step in range(steps):
+                #  use the sampled data for training
+                # HINT: use the agent's train function
+                # HINT: print or plot the loss for debugging!
+                print(f'\nmultistep: {step}\n') if step > 1 else None
+
+                loss = self.agent.train(*sampled_data)
+                if isinstance(loss, tuple):
+                    train_loss, val_loss = loss
+                    self.training_loss += [train_loss]
+                    self.val_loss += [val_loss]
+                else:
+                    self.training_loss += [loss]
+
+                # print(f'loss {loss}')
 
     def do_relabel_with_expert(self, expert_policy, paths):
         # : GETTHIS from HW1 (although you don't actually need it for this homework)
