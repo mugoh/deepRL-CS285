@@ -249,7 +249,7 @@ class RL_Trainer(object):
                 #  use the sampled data for training
                 # HINT: use the agent's train function
                 # HINT: print or plot the loss for debugging!
-                print(f'\nmultistep: {step}\n') if step > 1 else None
+                print(f'\nmultistep: {step}\n') if not step % 2 else None
 
                 loss = self.agent.train(*sampled_data)
                 if isinstance(loss, tuple):
