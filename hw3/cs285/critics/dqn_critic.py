@@ -2,6 +2,7 @@ from .base_critic import BaseCritic
 import tensorflow as tf
 from cs285.infrastructure.dqn_utils import minimize_and_clip, huber_loss
 
+
 class DQNCritic(BaseCritic):
 
     def __init__(self, sess, hparams, optimizer_spec, **kwargs):
@@ -29,13 +30,16 @@ class DQNCritic(BaseCritic):
         #####################
 
         # q values, created with the placeholder that holds CURRENT obs (i.e., t)
-        self.q_t_values = q_func(self.obs_t_ph, self.ac_dim, scope='q_func', reuse=False)
-        self.q_t = tf.reduce_sum(self.q_t_values * tf.one_hot(self.act_t_ph, self.ac_dim), axis=1)
+        self.q_t_values = q_func(
+            self.obs_t_ph, self.ac_dim, scope='q_func', reuse=False)
+        self.q_t = tf.reduce_sum(
+            self.q_t_values * tf.one_hot(self.act_t_ph, self.ac_dim), axis=1)
 
         #####################
 
         # target q values, created with the placeholder that holds NEXT obs (i.e., t+1)
-        q_tp1_values = q_func(self.obs_tp1_ph, self.ac_dim, scope='target_q_func', reuse=False)
+        q_tp1_values = q_func(self.obs_tp1_ph, self.ac_dim,
+                              scope='target_q_func', reuse=False)
 
         if self.double_q:
             # You must fill this part for Q2 of the Q-learning potion of the homework.
@@ -62,11 +66,11 @@ class DQNCritic(BaseCritic):
         # TODO compute the Bellman error (i.e. TD error between q_t and target_q_t)
         # Note that this scalar-valued tensor later gets passed into the optimizer, to be minimized
         # HINT: use reduce mean of huber_loss (from infrastructure/dqn_utils.py) instead of squared error
-        self.total_error= TODO
+        self.total_error = TODO
 
         #####################
 
-        # TODO these variables should all of the 
+        # TODO these variables should all of the
         # variables of the Q-function network and target network, respectively
         # HINT1: see the "scope" under which the variables were constructed in the lines at the top of this function
         # HINT2: use tf.get_collection to look for all variables under a certain scope
@@ -76,8 +80,10 @@ class DQNCritic(BaseCritic):
         #####################
 
         # train_fn will be called in order to train the critic (by minimizing the TD error)
-        self.learning_rate = tf.placeholder(tf.float32, (), name="learning_rate")
-        optimizer = self.optimizer_spec.constructor(learning_rate=self.learning_rate, **self.optimizer_spec.kwargs)
+        self.learning_rate = tf.placeholder(
+            tf.float32, (), name="learning_rate")
+        optimizer = self.optimizer_spec.constructor(
+            learning_rate=self.learning_rate, **self.optimizer_spec.kwargs)
         self.train_fn = minimize_and_clip(optimizer, self.total_error,
                                           var_list=q_func_vars, clip_val=self.grad_norm_clipping)
 

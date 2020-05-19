@@ -102,7 +102,9 @@ class DQNAgent(object):
     def train(self, ob_no, ac_na, re_n, next_ob_no, terminal_n):
         """
             Here, you should train the DQN agent.
-            This consists of training the critic, as well as periodically updating the target network.
+
+            This consists of training the critic, as well as periodically
+            updating the target network.
         """
 
         loss = 0.0
@@ -110,30 +112,35 @@ class DQNAgent(object):
                 self.t % self.learning_freq == 0 and
                 self.replay_buffer.can_sample(self.batch_size)):
 
-            # TODO populate all placeholders necessary for calculating the critic's total_error
+            # TODO populate all placeholders necessary for calculating the
+            # critic's total_error
             # HINT: obs_t_ph, act_t_ph, rew_t_ph, obs_tp1_ph, done_mask_ph
+            obs, actions, rewards, obs_next, dones = self.replay_buffer.sample(
+                self.batch_size)
             feed_dict = {
-                self.critic.learning_rate: self.optimizer_spec.lr_schedule.value(self.t),
-                TODO,
-                TODO,
-                TODO,
-                TODO,
-                TODO,
+                self.critic.learning_rate:
+                self.optimizer_spec.lr_schedule.value(self.t),
+                self.critic.obs_t_ph: obs,
+                self.critic.act_t_ph: actions,
+                self.critic.rew_t_ph: rewards,
+                self.critic.obs_tp1_ph: obs_next,
+                self.critic.done_mask_ph: dones,
             }
 
             # TODO: create a LIST of tensors to run in order to
             # train the critic as well as get the resulting total_error
-            tensors_to_run = TODO
+            tensors_to_run = [self.critic.train_fn, self.critic.total_error]
             loss, _ = self.sess.run(tensors_to_run, feed_dict=feed_dict)
             # Note: remember that the critic's total_error value is what you
             # created to compute the Bellman error in a batch,
             # and the critic's train function performs a gradient step
             # and update the network parameters to reduce that total_error.
 
-            # TODO: use sess.run to periodically update the critic's target function
+            # TODO: use sess.run to periodically update the critic's target
+            # function
             # HINT: see update_target_fn
             if self.num_param_updates % self.target_update_freq == 0:
-                TODO
+                self.sess.run(self.critic.update_target_fn)
 
             self.num_param_updates += 1
 
