@@ -55,8 +55,8 @@ class DQNAgent(object):
         # HINT: take random action
         # with probability eps (see np.random.random())
         # OR if your current step number (see self.t) is less that self.learning_starts
-        perform_random_action = True if self t <= self.learning_starts \
-            or np.random.random() < eps else False
+        perform_random_action = self t <= self.learning_starts \
+            or np.random.random() < eps
 
         if perform_random_action:
             action = np.random.randint(self.num_actions)
@@ -115,16 +115,14 @@ class DQNAgent(object):
             # TODO populate all placeholders necessary for calculating the
             # critic's total_error
             # HINT: obs_t_ph, act_t_ph, rew_t_ph, obs_tp1_ph, done_mask_ph
-            obs, actions, rewards, obs_next, dones = self.replay_buffer.sample(
-                self.batch_size)
             feed_dict = {
                 self.critic.learning_rate:
                 self.optimizer_spec.lr_schedule.value(self.t),
-                self.critic.obs_t_ph: obs,
-                self.critic.act_t_ph: actions,
-                self.critic.rew_t_ph: rewards,
-                self.critic.obs_tp1_ph: obs_next,
-                self.critic.done_mask_ph: dones,
+                self.critic.obs_t_ph: ob_no,
+                self.critic.act_t_ph: ac_na,
+                self.critic.rew_t_ph: re_n,
+                self.critic.obs_tp1_ph: next_ob_no,
+                self.critic.done_mask_ph: terminal_n,
             }
 
             # TODO: create a LIST of tensors to run in order to
