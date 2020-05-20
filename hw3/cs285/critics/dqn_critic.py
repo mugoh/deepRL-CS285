@@ -46,7 +46,15 @@ class DQNCritic(BaseCritic):
             # In double Q-learning, the best action is selected using the Q-network that
             # is being updated, but the Q-value for this action is obtained from the
             # target Q-network. See page 5 of https://arxiv.org/pdf/1509.06461.pdf for more details.
-            TODO
+            self.update_q_t = q_func(
+                self.obs_tp1_ph, self.ac_dim, scope='q_fun', reuse=True)
+            best_act = tf.argmax(self.update_q_t, axis=1)
+
+            states = tf.range(
+                tf.shape(self.obs_t_ph, out_type=tf.float32)[0], best_act)
+            states_idx = tf.stack(states, axis=1)
+
+            q_tp1 = tf.gather_nd(q_tp1_values, states_idx)
         else:
             # q values of the next timestep
             q_tp1 = tf.reduce_max(q_tp1_values, axis=1)
@@ -58,7 +66,9 @@ class DQNCritic(BaseCritic):
             #currentReward + self.gamma * qValuesOfNextTimestep * (1 - self.done_mask_ph)
         # HINT2: see above, where q_tp1 is defined as the q values of the next timestep
         # HINT3: see the defined placeholders and look for the one that holds current rewards
-        target_q_t = TODO
+
+        target_q_t = self.rew_t_ph + self.gamma * \
+            q_tp1 * (1 - self.done_mask_ph)
         target_q_t = tf.stop_gradient(target_q_t)
 
         #####################
@@ -66,7 +76,7 @@ class DQNCritic(BaseCritic):
         # TODO compute the Bellman error (i.e. TD error between q_t and target_q_t)
         # Note that this scalar-valued tensor later gets passed into the optimizer, to be minimized
         # HINT: use reduce mean of huber_loss (from infrastructure/dqn_utils.py) instead of squared error
-        self.total_error = TODO
+        self.total_error = tf.reduce_mean(huber_loss(self.q_t - target_q_t))
 
         #####################
 
@@ -74,8 +84,10 @@ class DQNCritic(BaseCritic):
         # variables of the Q-function network and target network, respectively
         # HINT1: see the "scope" under which the variables were constructed in the lines at the top of this function
         # HINT2: use tf.get_collection to look for all variables under a certain scope
-        q_func_vars = TODO
-        target_q_func_vars = TODO
+        q_func_vars = tf.get_collection(
+            tf.GraphKeys.TRAINABLE_VARIABLES, scope='q_func')
+        target_q_func_vars = tf.get_collection(
+            tf.GraphKeys.TRAINABLE_VARIABLES, scope='target_q_func')
 
         #####################
 
