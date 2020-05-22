@@ -114,13 +114,14 @@ class RL_Trainer(object):
         self.start_time = time.time()
 
         for itr in range(n_iter):
-            #print("\n\n********** Iteration %i ************"%itr)
+            if not itr % self.params['num_target_updates']:
+                print("\n\n********** Iteration %i ************" % itr)
 
             # decide if videos should be rendered/logged at this iteration
             if itr % self.params['video_log_freq'] == 0 and self.params['video_log_freq'] != -1:
-                self.logvideo = True
+                self.log_video = True
             else:
-                self.logvideo = False
+                self.log_video = False
 
             # decide if metrics should be logged
             if self.params['scalar_log_freq'] == -1:
@@ -154,7 +155,7 @@ class RL_Trainer(object):
             loss = self.train_agent()
 
             # log/save
-            if self.logvideo or self.logmetrics:
+            if self.log_video or self.logmetrics:
                 # perform logging
                 print('\nBeginning logging procedure...')
                 if isinstance(self.agent, DQNAgent):
@@ -202,7 +203,7 @@ class RL_Trainer(object):
         # TODO collect data to be used for training
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
-        print("\nCollecting data to be used for training...")
+        # print("\nCollecting data to be used for training...")
         paths, envsteps_this_batch = sample_trajectories(
             self.env, collect_policy, batch_size, max_path_length=self.params['ep_len'])  # TODO
 
@@ -219,7 +220,7 @@ class RL_Trainer(object):
 
     def train_agent(self):
         # TODO: GETTHIS from HW1
-        print('\nTraining agent using sampled data from replay buffer...')
+        # print('\nTraining agent using sampled data from replay buffer...')
         for train_step in range(self.params['num_agent_train_steps_per_iter']):
 
             # TODO sample some data from the data buffer
@@ -231,10 +232,11 @@ class RL_Trainer(object):
             # TODO use the sampled data for training
             # HINT: use the agent's train function
             # HINT: print or plot the loss for debugging!
-            _, loss = self.agent.train(*sampled_data)
-            self.training_loss += [loss]
+            loss = self.agent.train(*sampled_data)
+            # self.training_loss += [loss]
 
             # print(f'loss {loss}')
+            return loss
 
     def do_relabel_with_expert(self, expert_policy, paths):
         # TODO: GETTHIS from HW1 (although you don't actually need it for this homework)
@@ -254,9 +256,10 @@ class RL_Trainer(object):
     def perform_dqn_logging(self):
         episode_rewards = get_wrapper_by_name(
             self.env, "Monitor").get_episode_rewards()
-        if len(episode_rewards) > 0:
+        episode_rewards_len = len(episode_rewards)
+        if episode_rewards_len > 0:
             self.mean_episode_reward = np.mean(episode_rewards[-100:])
-        if len(episode_rewards) > 100:
+        if episode_rewards_len > 100:
             self.best_mean_episode_reward = max(
                 self.best_mean_episode_reward, self.mean_episode_reward)
 
@@ -270,6 +273,7 @@ class RL_Trainer(object):
         if self.best_mean_episode_reward > -5000:
             logs["Train_BestReturn"] = np.mean(self.best_mean_episode_reward)
         print("best mean reward %f" % self.best_mean_episode_reward)
+        print(f'episode len: {episode_rewards_len}')
 
         if self.start_time is not None:
             time_since_start = (time.time() - self.start_time)
@@ -293,7 +297,7 @@ class RL_Trainer(object):
             self.env, eval_policy, self.params['eval_batch_size'], self.params['ep_len'])
 
         # save eval rollouts as videos in tensorboard event file
-        if self.logvideo and train_video_paths != None:
+        if self.log_video and train_video_paths is not None:
             print('\nCollecting video rollouts eval')
             eval_video_paths = sample_n_trajectories(
                 self.env, eval_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
