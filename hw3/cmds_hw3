@@ -37,3 +37,9 @@ b) Half-Cheeter
 python cs285/scripts/run_hw3_actor_critic.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.90 --scalar_log_freq 1 -n 150 -l 2 -s 32 -b 30000 -eb 1500 -lr 0.02 --exp_name "$NTU"_"$NGSTPU" -ntu $NTU -ngsptu $NGSTPU
 ```
 
+
+Hyperparameter
+On LunarLandar: anneal learning_rate (Use atari_schedule),
+Initial - 1e-3, final-5e-4
+Initial - 1e-4, final 5-e-5
+default: 1e-3 constant (done in q2)
