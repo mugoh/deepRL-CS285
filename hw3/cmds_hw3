@@ -1,6 +1,34 @@
+#### Question 2.
+
+**DQN**
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_dqn_1 --seed 1
+```
+
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_dqn_2 --seed 2
+```
+
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_dqn_3 --seed 3
+```
+
+
+**Double DQN**
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doubledqn_1 --double_q --seed 1
+```
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doubledqn_2 --double_q --seed 2
+```
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doubledqn_3 --double_q --seed 3
+```
+
+
 **Actor Critic**
 
-### 4. Sanity check
+### Question 4. Sanity check
 
 #### Different target updates for different gradient steps for the critic
 
@@ -20,7 +48,7 @@ python cs285/scripts/run_hw3_actor_critic.py --env_name CartPole-v0 -n 100 -b 10
 python cs285/scripts/run_hw3_actor_critic.py --env_name CartPole-v0 -n 100 -b 1000 --exp_name 1_100 -ntu 1 -ngsptu 100
 ```
 
-5.
+#### Question 5.
 a) Inverted Pendulum
 
 `export NTU=100 && export NGSTPU=1`

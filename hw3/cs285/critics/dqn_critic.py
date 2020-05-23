@@ -47,12 +47,12 @@ class DQNCritic(BaseCritic):
             # is being updated, but the Q-value for this action is obtained from the
             # target Q-network. See page 5 of https://arxiv.org/pdf/1509.06461.pdf for more details.
             self.update_q_t = q_func(
-                self.obs_tp1_ph, self.ac_dim, scope='q_fun', reuse=True)
+                self.obs_tp1_ph, self.ac_dim, scope='q_func', reuse=True)
             best_act = tf.argmax(self.update_q_t, axis=1)
 
-            states = tf.range(
-                tf.shape(self.obs_t_ph, out_type=tf.float32)[0], best_act)
-            states_idx = tf.stack(states, axis=1)
+            states_idx = tf.range(
+                tf.shape(self.obs_t_ph, out_type=tf.int64)[0])
+            states_idx = tf.stack((states_idx, best_act), axis=1)
 
             q_tp1 = tf.gather_nd(q_tp1_values, states_idx)
         else:
