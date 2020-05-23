@@ -28,10 +28,10 @@ python run_hw2_policy_gradient.py --env_name CartPole-v0 -n 100 -b 5000 -rtg --e
 ```
 
 ### Deliverables
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex3%20Cartpole/lbs.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex3%20Cartpole/lbs.png)
 *Large batches (5000) at different lr*
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex3%20Cartpole/sbs.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex3%20Cartpole/sbs.png)
 *Small batches (1000)*
 
 #### Generating the image plots
@@ -44,14 +44,14 @@ In the hw2 directory, run the command
 **a)** Which value estimator has better performance without advantage-standardization: the trajectory-centric one, or the one using reward-to-go?
 
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_rtg_vs_no_rtg_Screenshot%20from%202020-04-25%2013-36-59.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_rtg_vs_no_rtg_Screenshot%20from%202020-04-25%2013-36-59.png)
 
 - The estimator using reward to go(rtg) convrges more quickly and has a more stable return/learning curve after the 80th step. Applying causality (rtg) minimizes variance
 
 **b)** Did advantage standardization help?
 
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_dsa_vs_nodsaScreenshot%20from%202020-04-25%2013-51-19.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_dsa_vs_nodsaScreenshot%20from%202020-04-25%2013-51-19.png)
 - Apparently. Standardization seems to improve learning stability but lowers the speed
 
 **Note**: In CArtpole, The agent receives a reward with a value of 1 for every step it survives. So the rewards are in a consistent range of values, and standardizing them seems safe, as there aren't important rare events with extremely high rewards.
@@ -66,7 +66,7 @@ My interpretation of this is standardizing advantages would similary scale down 
 
 *Yes*
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_vs_large_batch_rtg_adv_standardizationScreenshot%20from%202020-04-25%2013-55-55.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex3%20Cartpole/Small_batch_vs_large_batch_rtg_adv_standardizationScreenshot%20from%202020-04-25%2013-55-55.png)
 - Using a larger batch size results  in lower variance in the model during learning. The graph shows the learning is quicker and more stable for the large_batch compared to the small batch
 
 
@@ -81,7 +81,7 @@ My interpretation of this is standardizing advantages would similary scale down 
 python run_hw2_policy_gradient.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.9 -n 100 -l 2 -s 64 -b $BATCH_SIZE -lr $LR -rtg --exp_name ip_b"$BATCH_SIZE"_r"$LR"
 ```
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex4%20Inverted%20Pendulum/optimum_bs_lr2.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex4%20Inverted%20Pendulum/optimum_bs_lr2.png)
 *perfomance at bs=5000 and lr=.02*
 
 #### Generating the image plots
@@ -102,7 +102,7 @@ python run_hw2_policy_gradient.py --env_name LunarLanderContinuous-v2 --ep_len 1
 ```
 
 #### Deliverable
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex6%20lunar%20ladar/problem_6_lunar_ladar.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex6%20lunar%20ladar/problem_6_lunar_ladar.png)
 *LunarLadar learning curve*
 
 
@@ -116,7 +116,7 @@ export BATCH_SIZE=50000 && export LR=.02 && python run_hw2_policy_gradient.py --
 ```
 
 #### Deliverables:
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex7%20HalfCheeter/half_cheeter_blr_search.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex7%20HalfCheeter/half_cheeter_blr_search.png)
 
 - There's a steady increase in the average returns with increase in the batch size for the same number of steps, with increased training time.
 - Increase in learning rate results to faster learning[higher rewards in same learning time]. However, this is also dependant on the batch size - Smaller batches working better with smaller lr(The b10,000 did best on a lr.01, while b30,000 and b50,000 on a lr.02)
@@ -141,7 +141,7 @@ python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --disco
 python run_hw2_policy_gradient.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.95 -n 100 -l 2 -s 32 -b $BATCH_SIZE -lr $LR --video_log_freq -1 -rtg --nn_baseline --exp_name hc_b"$BATCH_SIZE"_r"$LR"
 ```
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/ex7%20HalfCheeter/rtg_baseline.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/ex7%20HalfCheeter/rtg_baseline.png)
 
 
 ## Experiment 9
@@ -167,7 +167,7 @@ GAE
 python run_hw2_policy_gradient.py --env_name Walker2d-v2 --ep_len 1000 --discount 0.995 -n 100 -l 2 -s 64 -b 1000 -lr 0.005 -rtg --nn_baseline --exp_name gae_1000_r0.005 --lambda 0.95 --gae
 ```
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/experiment%209/gae_no_gae.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/experiment%209/gae_no_gae.png)
 
 
 ### Multistep Policy Gradient
@@ -193,10 +193,10 @@ python run_hw2_policy_gradient.py --env_name Walker2d-v2 --discount 0.99 -n 100 
 ```
 - Doing multiple gradient updates with the same batch of updates affects perfomance drastically. The agent doesn't seem to learn at all. **Explanation for that?**
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/experiment%209/multistep_vs_singlestep_pg.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/experiment%209/multistep_vs_singlestep_pg.png)
 *Multi-step vs single-step. update steps: 3, 5, 10*
 
-![alt text](https://github.com/hogum/deepRL-cs285/blob/hw2/hw2/cs285/.figures_csv/experiment%209/multistep_half_cheeter.png)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw2/cs285/.figures_csv/experiment%209/multistep_half_cheeter.png)
 *Multistep vs single-step half-cheeter. update step: 3*
 
 
