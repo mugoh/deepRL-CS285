@@ -1,11 +1,19 @@
 #### Question 1 : Basic Q-learning performance
->> performance of my implementation on the game Pong
+>> performance of the DQN implementation on the game Pong
 
 a) mean 100-episode reward as well as
+Insert q1_average_return
+cap: Mean episode reward in 500k timesteps
+
 b) the best mean reward
 
+Insert q1_best_r
+cap: Best mean reward in 500k steps
+
+
+
 #### Question 2 : Comparison of DQN to DDQN
->> Three average random seeds.
+>> Comparing performance of DQN to the improved DDQN with three average random seeds for each
 
 **DQN**
 ```
@@ -20,6 +28,12 @@ python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_dqn_
 python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_dqn_3 --seed 3
 ```
 
+Insert q2_dqn_all
+cap: Average return for each seed
+
+
+Insert q2_dqn_all_averaged
+cap: Average for run seeds
 
 **Double DQN**
 ```
@@ -32,10 +46,23 @@ python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doub
 python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doubledqn_3 --double_q --seed 3
 ```
 
+Insert q2_ddqn_average_all
+cap: Ddqn average for each seed
+
+Insert q2_ddqn_average
+cap: Ddqn averaged runs
+
+
 
 #### Question 3 : Hyperparameters
 
 >> A single hyperparameter of choice and run at least three other settings of this hyperparameter, in addition to the one used in Question 1/2, and all four values plotted on the same graph.
+
+>> Your choice what you experiment with, but you should explain why you
+chose this hyperparameter
+
+>> **Hyperameter of Choice**: Learning rate
+>> We should expect a high learning rate to work well in the beginning when the agent is exploring and not much learning is being done. However, a smaller learning rate will maintain a stable yield in stages where more exploitation is taking place.
 
 - Learning rate annealed from 5e-3 to 5e-4 over 500e3 timesteps
 ```
@@ -52,7 +79,18 @@ python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q3_hpar
 python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q3_hparam3 --optm_spec_name lander_optimizer_annealed_3
 ```
 
+Insert q3
+cap: Average LunarLandar returns for different learning rates. The default learning rate, which is a constant 1e-3 for all 500e3 steps yields the lowest return.
 
+For 500e3 timesteps:
+A learning rate of 1e-3 seems to give a high and stable return at the initial stages of training.
+Starting with 5e-3, seems to increase the initial stage reward but learning is more unstable.
+
+The default learning rate, 1e-3, however, gives a drastic drop in return value towards the end of training. Compared to this, annealing the 1e-3 lr towards 5e-4 over the training timesteps gives stable and higher rewards.
+
+The lr of 1e-4 (hparam3) was too slow for the number of timesteps done
+
+ 
 **Actor Critic**
 
 #### Question 4. Sanity check
@@ -75,6 +113,9 @@ python cs285/scripts/run_hw3_actor_critic.py --env_name CartPole-v0 -n 100 -b 10
 python cs285/scripts/run_hw3_actor_critic.py --env_name CartPole-v0 -n 100 -b 1000 --exp_name 1_100 -ntu 1 -ngsptu 100
 ```
 
+Insert q4
+
+
 #### Question 5.
 a) Inverted Pendulum
 
@@ -84,6 +125,9 @@ a) Inverted Pendulum
 python cs285/scripts/run_hw3_actor_critic.py --env_name InvertedPendulum-v2 --ep_len 1000 --discount 0.95 -n 100 -l 2 -s 64 -b 5000 -lr 0.01 --exp_name "$NTU"_"$NGSTPU" -ntu $NTU -ngsptu $NGSTPU
 ```
 
+Insert q5_inverted_pendulum
+cap: Evaluation average return
+
 b) Half-Cheeter
 
 `export NTU=100 && export NGSTPU=1`
@@ -91,6 +135,9 @@ b) Half-Cheeter
 ```
 python cs285/scripts/run_hw3_actor_critic.py --env_name HalfCheetah-v2 --ep_len 150 --discount 0.90 --scalar_log_freq 1 -n 150 -l 2 -s 32 -b 30000 -eb 1500 -lr 0.02 --exp_name "$NTU"_"$NGSTPU" -ntu $NTU -ngsptu $NGSTPU
 ```
+
+Insert q5_half_cheeter
+cap: Averaged evaluation return for 150 steps
 
 
 Hyperparameter
