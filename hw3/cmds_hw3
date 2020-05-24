@@ -1,4 +1,11 @@
-#### Question 2.
+#### Question 1 : Basic Q-learning performance
+>> performance of my implementation on the game Pong
+
+a) mean 100-episode reward as well as
+b) the best mean reward
+
+#### Question 2 : Comparison of DQN to DDQN
+>> Three average random seeds.
 
 **DQN**
 ```
@@ -26,11 +33,31 @@ python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doub
 ```
 
 
+#### Question 3 : Hyperparameters
+
+>> A single hyperparameter of choice and run at least three other settings of this hyperparameter, in addition to the one used in Question 1/2, and all four values plotted on the same graph.
+
+- Learning rate annealed from 5e-3 to 5e-4 over 500e3 timesteps
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q3_hparam1 --optm_spec_name lander_optimizer_annealed_1
+```
+
+- Learning rate annealed from 1e-3 to 5e-4 over 500e3 timesteps
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q3_hparam2 --optm_spec_name lander_optimizer_annealed_2
+```
+
+- Learning rate annealed from 1e-4 to 5e-5 over 500e3 timesteps
+```
+python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q3_hparam3 --optm_spec_name lander_optimizer_annealed_3
+```
+
+
 **Actor Critic**
 
-### Question 4. Sanity check
+#### Question 4. Sanity check
 
-#### Different target updates for different gradient steps for the critic
+##### Different target updates for different gradient steps for the critic
 
 ```
 python cs285/scripts/run_hw3_actor_critic.py --env_name CartPole-v0 -n 100 -b 1000 --exp_name 1_1 -ntu 1 -ngsptu 1
