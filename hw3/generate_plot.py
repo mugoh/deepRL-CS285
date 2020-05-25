@@ -63,6 +63,43 @@ def q_2():
     plt.show()
 
 
+def q_5():
+    """
+        Actor Critic with Pendulum and Half-Cheeter
+    """
+    paths = glob.glob('*q5*')
+
+    fig, axs = plt.subplots(2)
+    fig.suptitle('Q5', x=0.2, y=0.97, size=11)
+
+    draw_plot(axs[0], title='Inverted Pendulum',
+              path=paths[1], sci_ticks=False)
+    draw_plot(axs[1], title='Half Cheeter',
+              path=paths[0], sci_ticks=False)
+    fig.tight_layout()
+
+    plt.show()
+
+
+def q_4():
+    """
+        Target updates with CartPole
+    """
+
+    paths = glob.glob('*q4*')
+
+    legends = [
+        draw_plot_plt(path, path.split('.')[0],
+                      sci_ticks=False) for path in paths]
+
+    plt.title('Q4 Target vs Gradient Updates',
+              fontdict={'size': 11})
+    plt.legend(handles=legends)
+    plt.xlabel('step  (s)')
+    plt.ylabel('reward')
+    plt.show()
+
+
 def q_3():
     """
         Hyperparameter search
@@ -75,21 +112,25 @@ def q_3():
     plt.title('Q3 plot for different Learning rates',
               fontdict={'size': 11})
     plt.legend(handles=legends)
+    plt.xlabel('step  (s)')
+    plt.ylabel('reward')
+
     plt.show()
 
 
-def draw_plot_plt(path, title):
+def draw_plot_plt(path, title, sci_ticks=True):
     """
         Draw non-axis plots
     """
-    title = title.replace('_', ' ')
+    title = title[3:].replace('_', ' ')
     figures = np.loadtxt(path,
                          delimiter=',',
                          skiprows=1,
                          )
 
     legend = plt.plot(figures[:, 1], figures[:, 2], label=title)
-    plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+    if sci_ticks:
+        plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 
     return legend[0]
 
@@ -105,7 +146,8 @@ def average_seed(paths):
     return fig.mean(axis=0)
 
 
-def draw_plot(axis, title, path=None, figures=None, change_ticks=False):
+def draw_plot(axis, title, path=None, figures=None, change_ticks=False,
+              sci_ticks=True):
     """
         Draws plots using loaded csv data
     """
@@ -114,7 +156,11 @@ def draw_plot(axis, title, path=None, figures=None, change_ticks=False):
                          skiprows=1) if not np.any(figures) else figures
     axis.plot(figures[:, 1], figures[:, 2], label=title)
     axis.set_title(title, fontdict={'size': 10})
-    axis.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+    axis.set_ylabel('reward')
+    axis.set_xlabel('step (s)')
+
+    if sci_ticks:
+        axis.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 
     if change_ticks:
         axis.yaxis.set_major_locator(MultipleLocator(100))
