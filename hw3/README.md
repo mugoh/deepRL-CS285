@@ -13,7 +13,7 @@ e.g `python3 generate_plot.py q1   # plots for question 1`
 
 
 #### Question 1 : Basic Q-learning performance
->> performance of the DQN implementation on the game Pong
+> performance of the DQN implementation on the game Pong
 
 a) mean 100-episode reward as well as
 Insert q1_average_return
@@ -27,7 +27,7 @@ cap: Best mean reward in 500k steps
 
 
 #### Question 2 : Comparison of DQN to DDQN
->> Comparing performance of DQN to the improved DDQN with three average random seeds for each
+> Comparing performance of DQN to the improved DDQN with three average random seeds for each
 
 **DQN**
 ```
@@ -68,13 +68,13 @@ cap: Dqn and Ddqn returns averaged for the three seeds
 
 #### Question 3 : Hyperparameters
 
->> A single hyperparameter of choice and run at least three other settings of this hyperparameter, in addition to the one used in Question 1/2, and all four values plotted on the same graph.
+> A single hyperparameter of choice and run at least three other settings of this hyperparameter, in addition to the one used in Question 1/2, and all four values plotted on the same graph.
 
->> Your choice what you experiment with, but you should explain why you
+> Your choice what you experiment with, but you should explain why you
 chose this hyperparameter
 
->> **Hyperameter of Choice**: Learning rate
->> We should expect a high learning rate to work well in the beginning when the agent is exploring and not much learning is being done. However, a smaller learning rate will maintain a stable yield in stages where more exploitation is taking place.
+> **Hyperameter of Choice**: Learning rate
+> We should expect a high learning rate to work well in the beginning when the agent is exploring and not much learning is being done. However, a smaller learning rate will maintain a stable yield in stages where more exploitation is taking place.
 
 - Learning rate annealed from 5e-3 to 5e-4 over 500e3 timesteps
 ```
@@ -109,7 +109,7 @@ The lr of 1e-4 (hparam3) was too slow for the number of timesteps done
 
 ##### Different target updates for different gradient steps for the critic
 
->> Compare the results for the following settings and report
+> Compare the results for the following settings and report
 which worked best. The best setting should match the policy gradient results
 from Cartpole in hw2 (200)
 
