@@ -79,7 +79,7 @@ def plot():
 
 def create_plt(path, title_):
     for item in path:
-        figures = np.loadtxt(item, delimiter=',', skiprows=1)
+        figures = np.loadtxt(item, delimiter=',', skiprows=2)
         plt.plot(figures[:, 1], figures[:, 2], label=item[20:30])
 
     plt.title(title_)
