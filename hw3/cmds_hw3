@@ -32,8 +32,6 @@ Insert q2_dqn_all
 cap: Average return for each seed
 
 
-Insert q2_dqn_all_averaged
-cap: Average for run seeds
 
 **Double DQN**
 ```
@@ -49,8 +47,8 @@ python cs285/scripts/run_hw3_dqn.py --env_name LunarLander-v2 --exp_name q2_doub
 Insert q2_ddqn_average_all
 cap: Ddqn average for each seed
 
-Insert q2_ddqn_average
-cap: Ddqn averaged runs
+Insert q2_dqn_ddqn_average
+cap: Dqn and Ddqn returns averaged for the three seeds
 
 
 

@@ -63,6 +63,37 @@ def q_2():
     plt.show()
 
 
+def q_3():
+    """
+        Hyperparameter search
+    """
+    paths = glob.glob('*q3*')
+
+    legends = [
+        draw_plot_plt(path, path.split('.')[0]) for path in paths]
+
+    plt.title('Q3 plot for different Learning rates',
+              fontdict={'size': 11})
+    plt.legend(handles=legends)
+    plt.show()
+
+
+def draw_plot_plt(path, title):
+    """
+        Draw non-axis plots
+    """
+    title = title.replace('_', ' ')
+    figures = np.loadtxt(path,
+                         delimiter=',',
+                         skiprows=1,
+                         )
+
+    legend = plt.plot(figures[:, 1], figures[:, 2], label=title)
+    plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+
+    return legend[0]
+
+
 def average_seed(paths):
     """
         Gets the mean of seeded runs
@@ -86,9 +117,9 @@ def draw_plot(axis, title, path=None, figures=None, change_ticks=False):
     axis.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 
     if change_ticks:
-        axis.yaxis.set_major_locator(MultipleLocator(50))
+        axis.yaxis.set_major_locator(MultipleLocator(100))
         axis.yaxis.set_major_formatter(FormatStrFormatter('%d'))
-        axis.yaxis.set_minor_locator(MultipleLocator(10))
+        axis.yaxis.set_minor_locator(MultipleLocator(20))
 
     axis.grid()
 
