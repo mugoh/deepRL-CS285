@@ -4,12 +4,14 @@ from cs285.policies.MPC_policy import MPCPolicy
 from cs285.infrastructure.replay_buffer import ReplayBuffer
 from cs285.infrastructure.utils import *
 
+import numpy as np
+
 
 class MBAgent(BaseAgent):
     def __init__(self, sess, env, agent_params):
         super(MBAgent, self).__init__()
 
-        self.env = env.unwrapped 
+        self.env = env.unwrapped
         self.sess = sess
         self.agent_params = agent_params
         self.ensemble_size = self.agent_params['ensemble_size']
@@ -27,10 +29,10 @@ class MBAgent(BaseAgent):
 
         self.actor = MPCPolicy(sess,
                                self.env,
-                               ac_dim = self.agent_params['ac_dim'],
-                               dyn_models = self.dyn_models,
-                               horizon = self.agent_params['mpc_horizon'],
-                               N = self.agent_params['mpc_num_action_sequences'],
+                               ac_dim=self.agent_params['ac_dim'],
+                               dyn_models=self.dyn_models,
+                               horizon=self.agent_params['mpc_horizon'],
+                               N=self.agent_params['mpc_num_action_sequences'],
                                )
 
         self.replay_buffer = ReplayBuffer()
@@ -44,17 +46,20 @@ class MBAgent(BaseAgent):
         num_data_per_ens = int(num_data/self.ensemble_size)
 
         for i in range(self.ensemble_size):
-            
+
             # select which datapoints to use for this model of the ensemble
             # you might find the num_data_per_env variable defined above useful
 
-            observations = # TODO(Q1)
-            actions = # TODO(Q1)
-            next_observations = # TODO(Q1)
+            idx = np.random.randint(num_data, size=num_data_per_ens)
+
+            observations = ob_no[idx]  # TODO(Q1)
+            actions = ac_na[idx]  # TODO(Q1)
+            next_observations = next_ob_no[idx]  # TODO(Q1)
 
             # use datapoints to update one of the dyn_models
-            model =  # TODO(Q1)
-            loss = model.update(observations, actions, next_observations, self.data_statistics)
+            model = self.dyn_models[i]  # TODO(Q1)
+            loss = model.update(observations, actions,
+                                next_observations, self.data_statistics)
             losses.append(loss)
 
         avg_loss = np.mean(losses)
@@ -66,19 +71,21 @@ class MBAgent(BaseAgent):
         self.replay_buffer.add_rollouts(paths, noised=add_sl_noise)
 
         # get updated mean/std of the data in our replay buffer
-        self.data_statistics = {'obs_mean': np.mean(self.replay_buffer.obs, axis=0),
-                                'obs_std': np.std(self.replay_buffer.obs, axis=0),
-                                'acs_mean': np.mean(self.replay_buffer.acs, axis=0),
-                                'acs_std': np.std(self.replay_buffer.acs, axis=0),
-                                'delta_mean': np.mean(
-                                    self.replay_buffer.next_obs - self.replay_buffer.obs,
-                                    axis=0),
-                                'delta_std': np.std(
-                                    self.replay_buffer.next_obs - self.replay_buffer.obs,
-                                    axis=0),
-                                }
+        self.data_statistics = {
+            'obs_mean': np.mean(self.replay_buffer.obs, axis=0),
+            'obs_std': np.std(self.replay_buffer.obs, axis=0),
+            'acs_mean': np.mean(self.replay_buffer.acs, axis=0),
+            'acs_std': np.std(self.replay_buffer.acs, axis=0),
+            'delta_mean': np.mean(
+                self.replay_buffer.next_obs - self.replay_buffer.obs,
+                axis=0),
+            'delta_std': np.std(
+                self.replay_buffer.next_obs - self.replay_buffer.obs,
+                axis=0),
+        }
 
-        # update the actor's data_statistics too, so actor.get_action can be calculated correctly
+        # update the actor's data_statistics too,
+        # so actor.get_action can be calculated correctly
         self.actor.data_statistics = self.data_statistics
 
     def sample(self, batch_size):
