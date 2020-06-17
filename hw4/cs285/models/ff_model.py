@@ -75,8 +75,7 @@ class FFModel(BaseModel):
             concatenated_input, output_size=self.ob_dim,
             scope=self.scope,
             n_layers=self.n_layers,
-            size=self.size,
-            activation=tf.nn.relu)
+            size=self.size)
         # TODO(Q1) Unnormalize the the delta_pred above using the unnormalize function,
         # and self.delta_mean_pl and self.delta_std_pl
         self.delta_pred_unnormalized = unnormalize(
@@ -88,13 +87,17 @@ class FFModel(BaseModel):
 
         # normalize the labels
         # TODO(Q1) Define a normalized version of delta_labels using self.delta_labels (which are unnormalized), and self.delta_mean_pl and self.delta_std_pl
-        self.delta_labels_normalized =
+        self.delta_labels_normalized = normalize(self.delta_labels,
+                                                 mean=self.delta_mean_pl,
+                                                 std=self.delta_std_pl)
 
         # compared predicted deltas to labels (both should be normalized)
         # TODO(Q1) Define a loss function that takes as input normalized versions of predicted change in state and ground truth change in state
-        self.loss =
+        self.loss = tf.lossses.mean_squared_error(self.delta_pred_normalized,
+                                                  self.delta_labels_normalized)
         # TODO(Q1) Define a train_op to minimize the loss defined above. Adam optimizer will work well.
-        self.train_op =
+        self.train_op = tf.train.AdamOptimizer(
+            self.learning_rate).minimize(self.loss)
 
     #############################
 
@@ -110,5 +113,18 @@ class FFModel(BaseModel):
     def update(self, observations, actions, next_observations, data_statistics):
         # train the model
         # TODO(Q1) Run the defined train_op here, and also return the loss being optimized (on this batch of data)
-        _, loss =
+        _, loss = self.sess.run(
+            [self.train_op, self.loss],
+            feed_dict={
+                self.obs_pl: observations,
+                self.acs_pl: actions,
+                self.delta_labels: next_observations,
+                self.obs_mean_pl: data_statistics['obs_mean'],
+                self.obs_std_pl: data_statistics['obs_std'],
+                self.acs_mean_pl: data_statistics['acs_std'],
+                self.acs_std_pl: data_statistics['acs_std'],
+                self.delta_mean_pl: data_statistics['delta_mean'],
+                self.delta_std_pl: data_statistics['delta_std']
+
+            })
         return loss
