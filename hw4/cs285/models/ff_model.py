@@ -93,7 +93,7 @@ class FFModel(BaseModel):
 
         # compared predicted deltas to labels (both should be normalized)
         # TODO(Q1) Define a loss function that takes as input normalized versions of predicted change in state and ground truth change in state
-        self.loss = tf.lossses.mean_squared_error(self.delta_pred_normalized,
+        self.loss = tf.losses.mean_squared_error(self.delta_pred_normalized,
                                                   self.delta_labels_normalized)
         # TODO(Q1) Define a train_op to minimize the loss defined above. Adam optimizer will work well.
         self.train_op = tf.train.AdamOptimizer(
@@ -112,11 +112,21 @@ class FFModel(BaseModel):
             self.next_obs_pred,
             feed_dict={self.obs_pl: obs,
                        self.acs_pl: acs,
-                       self.obs_mean_pl: data_statistics['ob_mean'],
-                       self.obs_std_pl: data_statistics['obs_std'],
-                       self.acs_std_pl: data_statistics['acs_std'],
-                       self.acs_mean_pl: data_statistics['acs_mean']
+                       **self._extract_stats(data_statistics)
                        })  # TODO(Q1) Run model prediction on the given batch of data
+
+    def _extract_stats(self, data_statistics):
+        """
+            Feed data statistics to placeholders
+        """
+        return {
+            self.obs_mean_pl: data_statistics['obs_mean'],
+            self.obs_std_pl: data_statistics['obs_std'],
+            self.acs_std_pl: data_statistics['acs_std'],
+            self.acs_mean_pl: data_statistics['acs_mean'],
+            self.delta_mean_pl: data_statistics['delta_mean'],
+            self.delta_std_pl: data_statistics['delta_std']
+        }
 
     def update(self, observations, actions, next_observations, data_statistics):
         # train the model
@@ -127,12 +137,6 @@ class FFModel(BaseModel):
                 self.obs_pl: observations,
                 self.acs_pl: actions,
                 self.delta_labels: next_observations - observations,
-                self.obs_mean_pl: data_statistics['obs_mean'],
-                self.obs_std_pl: data_statistics['obs_std'],
-                self.acs_mean_pl: data_statistics['acs_std'],
-                self.acs_std_pl: data_statistics['acs_std'],
-                self.delta_mean_pl: data_statistics['delta_mean'],
-                self.delta_std_pl: data_statistics['delta_std']
-
+                **self._extract_stats(data_statistics)
             })
         return loss
