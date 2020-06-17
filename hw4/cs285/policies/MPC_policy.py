@@ -2,17 +2,19 @@ import numpy as np
 
 from .base_policy import BasePolicy
 
+from ..infrastructure.utils import sample_n_trajectories
+
 
 class MPCPolicy(BasePolicy):
 
     def __init__(self,
-        sess,
-        env,
-        ac_dim,
-        dyn_models,
-        horizon,
-        N,
-        **kwargs):
+                 sess,
+                 env,
+                 ac_dim,
+                 dyn_models,
+                 horizon,
+                 N,
+                 **kwargs):
         super().__init__(**kwargs)
 
         # init vars
@@ -21,7 +23,7 @@ class MPCPolicy(BasePolicy):
         self.dyn_models = dyn_models
         self.horizon = horizon
         self.N = N
-        self.data_statistics = None # NOTE must be updated from elsewhere
+        self.data_statistics = None  # NOTE must be updated from elsewhere
 
         self.ob_dim = self.env.observation_space.shape[0]
 
@@ -34,6 +36,11 @@ class MPCPolicy(BasePolicy):
     def sample_action_sequences(self, num_sequences, horizon):
         # TODO(Q1) uniformly sample trajectories and return an array of
         # dimensions (num_sequences, horizon, self.ac_dim)
+        random_action_sequences = sample_n_trajectories(
+            self.env,
+            policy=self,
+            ntraj=num_sequences,
+            max_path_length=horizon)['action']
         return random_action_sequences
 
     def get_action(self, obs):
@@ -42,8 +49,9 @@ class MPCPolicy(BasePolicy):
             # print("WARNING: performing random actions.")
             return self.sample_action_sequences(num_sequences=1, horizon=1)[0]
 
-        #sample random actions (Nxhorizon)
-        candidate_action_sequences = self.sample_action_sequences(num_sequences=self.N, horizon=self.horizon)
+        # sample random actions (Nxhorizon)
+        candidate_action_sequences = self.sample_action_sequences(
+            num_sequences=self.N, horizon=self.horizon)
 
         # a list you can use for storing the predicted reward for each candidate sequence
         predicted_rewards_per_ens = []
@@ -60,10 +68,11 @@ class MPCPolicy(BasePolicy):
 
         # calculate mean_across_ensembles(predicted rewards).
         # the matrix dimensions should change as follows: [ens,N] --> N
-        predicted_rewards = None # TODO(Q2)
+        predicted_rewards = None  # TODO(Q2)
 
         # pick the action sequence and return the 1st element of that sequence
-        best_index = None #TODO(Q2)
-        best_action_sequence = None #TODO(Q2)
-        action_to_take = None # TODO(Q2)
-        return action_to_take[None] # the None is for matching expected dimensions
+        best_index = None  # TODO(Q2)
+        best_action_sequence = None  # TODO(Q2)
+        action_to_take = None  # TODO(Q2)
+        # the None is for matching expected dimensions
+        return action_to_take[None]

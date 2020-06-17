@@ -108,7 +108,15 @@ class FFModel(BaseModel):
         else:
             observations = obs[None]
             actions = acs[None]
-        return  # TODO(Q1) Run model prediction on the given batch of data
+        return self.sess.run(
+            self.next_obs_pred,
+            feed_dict={self.obs_pl: obs,
+                       self.acs_pl: acs,
+                       self.obs_mean_pl: data_statistics['ob_mean'],
+                       self.obs_std_pl: data_statistics['obs_std'],
+                       self.acs_std_pl: data_statistics['acs_std'],
+                       self.acs_mean_pl: data_statistics['acs_mean']
+                       })  # TODO(Q1) Run model prediction on the given batch of data
 
     def update(self, observations, actions, next_observations, data_statistics):
         # train the model
@@ -118,7 +126,7 @@ class FFModel(BaseModel):
             feed_dict={
                 self.obs_pl: observations,
                 self.acs_pl: actions,
-                self.delta_labels: next_observations,
+                self.delta_labels: next_observations - observations,
                 self.obs_mean_pl: data_statistics['obs_mean'],
                 self.obs_std_pl: data_statistics['obs_std'],
                 self.acs_mean_pl: data_statistics['acs_std'],
