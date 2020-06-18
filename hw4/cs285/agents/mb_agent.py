@@ -50,7 +50,8 @@ class MBAgent(BaseAgent):
             # select which datapoints to use for this model of the ensemble
             # you might find the num_data_per_env variable defined above useful
 
-            idx = np.random.randint(num_data, size=num_data_per_ens)
+            idx = np.random.choice(
+                num_data, size=num_data_per_ens, replace=False)
 
             observations = ob_no[idx]  # TODO(Q1)
             actions = ac_na[idx]  # TODO(Q1)
