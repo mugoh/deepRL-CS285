@@ -50,12 +50,14 @@ class MBAgent(BaseAgent):
             # select which datapoints to use for this model of the ensemble
             # you might find the num_data_per_env variable defined above useful
 
-            idx = np.random.choice(
-                num_data, size=num_data_per_ens, replace=False)
+            # idx = np.random.choice(
+            #    num_data, size=num_data_per_ens, replace=False)
+            lw = i * num_data_per_ens
+            hg = num_data_per_ens * (i +1)
 
-            observations = ob_no[idx]  # TODO(Q1)
-            actions = ac_na[idx]  # TODO(Q1)
-            next_observations = next_ob_no[idx]  # TODO(Q1)
+            observations = ob_no[lw:hg]  # TODO(Q1)
+            actions = ac_na[lw:hg]  # TODO(Q1)
+            next_observations = next_ob_no[lw:hg]  # TODO(Q1)
 
             # use datapoints to update one of the dyn_models
             model = self.dyn_models[i]  # TODO(Q1)
