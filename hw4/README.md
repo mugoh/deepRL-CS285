@@ -1,54 +1,163 @@
-1) See hw1 if you'd like to see installation instructions. You do NOT have to redo them.
 
-##############################################
-##############################################
+##### Generating the Plots
 
+```
+  $ python generate_plots $problem_number
 
-2) Code:
-
--------------------------------------------
-
-Files to look at, even though there are no explicit 'TODO' markings:
-- scripts/run_hw4_mb.py
-
--------------------------------------------
-
-Blanks to be filled in by using your code from hw1 are marked with 'TODO: GETTHIS from HW1'
-
-The following files have these:
-- infrastructure/rl_trainer.py
-- infrastructure/utils.py
-- policies/MLP_policy.py
-
-Blanks to be filled in by using your code from hw2 are marked with 'TODO: GETTHIS from HW2'
-
-- infrastructure/utils.py
-- policies/MLP_policy.py
-
--------------------------------------------
-
-Blanks to be filled in now (for this assignment) are marked with 'TODO'
-
-The following files have these:
-- critics/mb_agent.py
-- models/ff_model.py
-- policies/MPC_policy.py
-- infrastructure/utils.py
-
-##############################################
-##############################################
+  # problem_number in [2, 3, 4]
+```
 
 
-3) Commands: 
+### Problem 1
 
-Please refer to the PDF for the specific commands needed for different questions. 
+**Commands**
 
-##############################################
+1. 500 steps per iteration. Network: 1 layer, size 32
+```
+
+python cs285/scripts/run_hw4_mb.py --exp_name cheetah_n500_arch1x32 --env_name cheetah-cs285-v0 --add_sl_noise --n_iter 1 --batch_size_initial 20000 --num_agent_train_steps_per_iter 500 --n_layers 1 --size 32 --scalar_log_freq -1 --video_log_freq -1
+
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_1_itr_0_losses.png)
+_Losses_
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_1_itr_0_predictions.png)
+_Model Predictions(red) vs State labels(green)
 
 
-4) Visualize saved tensorboard event file:
+2. 5 steps per iteration. Network: 2 layer, size 250
+```
+python cs285/scripts/run_hw4_mb.py --exp_name cheetah_n5_arch2x250 --env_name cheetah-cs285-v0 --add_sl_noise --n_iter 1 --batch_size_initial 20000 --num_agent_train_steps_per_iter 5 --n_layers 2 --size 250 --scalar_log_freq -1 --video_log_freq -1
+```
 
-$ cd cs285/data/<your_log_dir>
-$ tensorboard --logdir .
 
-Then, navigate to shown url to see scalar summaries as plots (in 'scalar' tab), as well as videos (in 'images' tab)
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_2_itr_0_losses.png)
+_Losses_
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_2_itr_0_predictions.png)
+_Predictions_
+
+
+3. 500 steps per iteration. Network: 2 layer, size 250
+```
+python cs285/scripts/run_hw4_mb.py --exp_name cheetah_n500_arch2x250 --env_name cheetah-cs285-v0 --add_sl_noise --n_iter 1 --batch_size_initial 20000 --num_agent_train_steps_per_iter 500 --n_layers 2 --size 250 --scalar_log_freq -1 --video_log_freq -1
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_3_itr_0_losses.png)
+_Losses_
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p1_run_3_itr_0_predictions.png)
+_Predictions_
+
+
+---
+
+
+### Problem 2
+
+#### Action selection using your learned dynamics model and a given reward func-
+tion
+
+**Commands**
+
+Execution of Random actions vs MPC
+```
+python cs285/scripts/run_hw4_mb.py --exp_name obstacles_singleiteration --env_name obstacles-cs285-v0 --add_sl_noise --num_agent_train_steps_per_iter 20 --n_iter 1 --batch_size_initial 5000 --batch_size 1000 --mpc_horizon 10 --video_log_freq -1
+```
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p2_plot.png)
+
+Train(random actions) vs Evaluation losses(MPC corrected)
+
+---
+
+### Problem 3
+
+#### MBRL algorithm with on-policy data collection and iterative model training
+
+**Commands**
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name obstacles --env_name obstacles-cs285-v0 --add_sl_noise --num_agent_train_steps_per_iter 20 --batch_size_initial 5000 --batch_size 1000 --mpc_horizon 10 --n_iter 12 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name reacher --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size_initial 5000 --batch_size 5000 --n_iter 15 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name cheetah --env_name cheetah-cs285-v0 --mpc_horizon 15 --add_sl_noise --num_agent_train_steps_per_iter 1500 --batch_size_initial 5000 --batch_size 5000 --n_iter 20 --video_log_freq -1
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p3_plot.png)
+
+_Iterative training on cheetah, reacher, and obstacles for different iteration steps_
+
+
+---
+
+
+### Problem 4
+
+#### Hyperparameter Comparison
+
+**Commands**
+
+
+MPC Planning horizon
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_horizon5 --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 5 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_horizon15 --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 15 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_horizon30 --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 30 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p4_horizon_len.png)
+
+> The train return increases with the length of the planning horizon upto a certain limit, beyond which the return starts decreasing. Reward for each horizon length: 0  < 15 > 30
+
+> Evaluation return increases with shorter planning horizon
+
+
+
+No. action sequences
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_numseq100 --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --mpc_num_action_sequences 100 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_numseq1000 --env_name reacher-cs285-v0 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --mpc_num_action_sequences 1000 --video_log_freq -1
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p4_num_seq.png)
+
+> Evaluation return increases with increase in the number of action sequences
+
+
+Ensemble size
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_ensemble1 --env_name reacher-cs285-v0 --ensemble_size 1 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_ensemble3 --env_name reacher-cs285-v0 --ensemble_size 3 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+```
+python cs285/scripts/run_hw4_mb.py --exp_name q5_reacher_ensemble5 --env_name reacher-cs285-v0 --ensemble_size 5 --add_sl_noise --mpc_horizon 10 --num_agent_train_steps_per_iter 1000 --batch_size 800 --n_iter 15 --video_log_freq -1
+```
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p4_ensemble_size.png)
+_Train loss for diffenrent ensemble sizes_
+
+> The train average return increases with increase in the Ensemble size
+
+![alt text](https://github.com/mugoh/deepRL-cs285/blob/master/hw4/cs285/.figures/hw4/p4_plot.png)
+
