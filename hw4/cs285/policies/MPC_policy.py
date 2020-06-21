@@ -65,13 +65,23 @@ class MPCPolicy(BasePolicy):
             # once you have a sequence of predicted states from each model in your
             # ensemble, calculate the reward for each sequence using self.env.get_reward (See files in envs to see how to call this)
 
-            pred_states = []
+            if obs.ndim == 1:
+                obs = obs[np.newaxis, ]
 
-            for ac_sequence in candidate_action_sequences:
-                states_sequence = model.get_prediction(obs, ac_sequence)
-                pred_states.append(states_sequence)
-            reward = self.env.get_reward(
-                pred_states, candidate_action_sequences)[0]
+            # Match dimension for action sequence
+            state_seq = np.tile(obs, [self.N, 1])
+
+            reward = 0
+
+            for step in range(self.horizon):
+                action_seq = candidate_action_sequences[:, step]
+                rew = self.env.get_reward(state_seq, action_seq)[0]
+
+                state_seq = model.get_prediction(
+                    state_seq, action_seq, self.data_statistics)
+
+                reward += rew
+
             predicted_rewards_per_ens.append(reward)
 
         # calculate mean_across_ensembles(predicted rewards).
@@ -80,7 +90,7 @@ class MPCPolicy(BasePolicy):
             predicted_rewards_per_ens, axis=0)  # TODO(Q2)
 
         # pick the action sequence and return the 1st element of that sequence
-        best_index = predicted_rewards.sum(axis=1).argmax()  # TODO(Q2)
+        best_index = predicted_rewards.argmax()  # TODO(Q2)
         # TODO(Q2)
         best_action_sequence = candidate_action_sequences[best_index]
         action_to_take = best_action_sequence[0]  # TODO(Q2)
