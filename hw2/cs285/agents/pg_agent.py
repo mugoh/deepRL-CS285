@@ -147,7 +147,7 @@ class PGAgent(BaseAgent):
                 delta = rewards[t] + (1 - terminals[t]) * \
                     self.gamma * v_baseline[t+1] - v_baseline[t]
 
-                adv[t] = delta + self.gamma * self.lamda * adv[t+2]
+                adv[t] = delta + self.gamma * self.lamda * adv[t+1]
         q_values = adv + v_baseline
 
         return q_values, adv

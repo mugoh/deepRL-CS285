@@ -73,6 +73,12 @@ class RL_Trainer(object):
         self.agent = agent_class(
             self.sess, self.env, self.params['agent_params'])
 
+
+        # Collect expert train data
+        self.eval_expert_data = {}
+        self.save_expert_policy = self.params.get('save_expert_policy')
+        self.min_expert_return = self.params['expert_min_rew']
+
         #############
         # INIT VARS
         #############
@@ -95,6 +101,7 @@ class RL_Trainer(object):
         # init vars at beginning of training
         self.total_envsteps = 0
         self.start_time = time.time()
+        self.n_iter_ = n_iter
 
         if self.params['parallel']:
             batch_s = self.params['batch_size']
@@ -241,23 +248,15 @@ class RL_Trainer(object):
             # ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = None  #TODO
             sampled_data = self.agent.sample(self.params['train_batch_size'])
 
-            steps = self.params['multistep']
+            # print('\n == Using multistep PG ==') if steps > 1 else None
 
-            print('\n == Using multistep PG ==') if steps > 1 else None
-
-            for step in range(steps):
-                #  use the sampled data for training
-                # HINT: use the agent's train function
-                # HINT: print or plot the loss for debugging!
-                print(f'\nmultistep: {step}\n') if not step % 2 else None
-
-                loss = self.agent.train(*sampled_data)
-                if isinstance(loss, tuple):
-                    train_loss, val_loss = loss
-                    self.training_loss += [train_loss]
-                    self.val_loss += [val_loss]
-                else:
-                    self.training_loss += [loss]
+            loss = self.agent.train(*sampled_data)
+            if isinstance(loss, tuple):
+                train_loss, val_loss = loss
+                self.training_loss += [train_loss]
+                self.val_loss += [val_loss]
+            else:
+                self.training_loss += [loss]
 
                 # print(f'loss {loss}')
 
@@ -277,7 +276,7 @@ class RL_Trainer(object):
         ####################################
         ####################################
 
-    def perform_logging(self, itr, paths, eval_policy, train_video_paths):
+    def perform_logging(self, itr, paths, eval_policy, train_video_paths, save_expert_policy=False):
 
         # collect eval trajectories, for logging
         print("\nCollecting data for eval...")
@@ -340,3 +339,17 @@ class RL_Trainer(object):
             print('Done logging...\n\n')
 
             self.logger.flush()
+
+
+            # Save expert policy
+            if self.save_expert_policy:
+                if logs['Eval_AverageReturn'] >= self.min_expert_return:
+                    self.eval_expert_data.update({f'iter_{itr}': eval_paths})
+
+                if itr == self.n_iter_ - 1:
+                    self.save_evals()
+
+    def save_evals(self):
+        """Save trajectories to file"""
+        file_path = f'expert_data_{time.strftime("%d-%m-%Y_%H-%M-%S")}'
+        np.savez(file_path, **self.eval_expert_data)

@@ -41,6 +41,12 @@ class PG_Trainer(object):
         self.params['agent_params'] = agent_params
         self.params['batch_size_initial'] = self.params['batch_size']
 
+        # Collect expert data
+        self.params['save_expert_policy'] = False
+
+        # Min evaluation rew to save expert data for each epoch
+        self.params['expert_min_rew'] = 180
+
         ################
         # RL TRAINER
         ################
@@ -92,7 +98,7 @@ def main():
     parser.add_argument('--parallel', action='store_true')
     # GAE for advantage estimation
     parser.add_argument('--gae', action='store_true')
-    parser.add_argument('--lambda', type=float, default=.95)
+    parser.add_argument('--lambda', type=float, default=.98)
     parser.add_argument('--save_params', action='store_true')
     parser.add_argument('--multistep', '-ms', type=int, default=1)
 
